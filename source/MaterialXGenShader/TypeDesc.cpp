@@ -75,6 +75,11 @@ TypeSystem::TypeSystem()
     registerType(Type::DISPLACEMENTSHADER);
     registerType(Type::LIGHTSHADER);
     registerType(Type::MATERIAL);
+
+    registerType(Type::TEXTUREOVENAOVDATA);
+    registerType(Type::TEXTUREOVENBAKEMATERIALSDATA);
+    registerType(Type::UBERDATA);
+    registerType(Type::SHADINGAOVSDATA);
 }
 
 TypeSystemPtr TypeSystem::create()

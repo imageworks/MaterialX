@@ -462,6 +462,47 @@ OslSyntax::OslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
             "0",
             "closure color",
             "#define MATERIAL closure color"));
+
+    registerTypeSyntax(
+        Type::TEXTUREOVENAOVDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "textureOvenAovData",
+            "TEXTURE_OVEN_AOV_DATA_INIT",
+            "TEXTURE_OVEN_AOV_DATA_INIT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::TEXTUREOVENBAKEMATERIALSDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "textureOvenBakeMaterialsData",
+            "TEXTURE_OVEN_BAKE_MATERIALS_INPUT_INIT",
+            "TEXTURE_OVEN_BAKE_MATERIALS_INPUT_INIT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::UBERDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "uberData",
+            "UBER_DATA_INIT",
+            "UBER_DATA_INIT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::SHADINGAOVSDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "shadingAovsData",
+            "SHADING_AOVS_DATA_INIT",
+            "SHADING_AOVS_DATA_INIT",
+            "",
+            ""));
+
 }
 
 const string& OslSyntax::getOutputQualifier() const
