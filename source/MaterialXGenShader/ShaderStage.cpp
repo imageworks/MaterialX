@@ -319,25 +319,25 @@ void ShaderStage::addBlock(const string& str, const FilePath& sourceFilename, Ge
     StringStream stream(str);
     for (string line; std::getline(stream, line);)
     {
-        size_t pos = line.find(INCLUDE);
-        if (pos != string::npos)
-        {
-            size_t startQuote = line.find_first_of(QUOTE);
-            size_t endQuote = line.find_last_of(QUOTE);
-            if (startQuote != string::npos && endQuote != string::npos && endQuote > startQuote)
-            {
-                size_t length = (endQuote - startQuote) - 1;
-                if (length)
-                {
-                    const string filename = line.substr(startQuote + 1, length);
-                    addInclude(filename, sourceFilename, context);
-                }
-            }
-        }
-        else
-        {
+        // size_t pos = line.find(INCLUDE);
+        // if (pos != string::npos)
+        // {
+        //     size_t startQuote = line.find_first_of(QUOTE);
+        //     size_t endQuote = line.find_last_of(QUOTE);
+        //     if (startQuote != string::npos && endQuote != string::npos && endQuote > startQuote)
+        //     {
+        //         size_t length = (endQuote - startQuote) - 1;
+        //         if (length)
+        //         {
+        //             const string filename = line.substr(startQuote + 1, length);
+        //             addInclude(filename, sourceFilename, context);
+        //         }
+        //     }
+        // }
+        // else
+        // {
             addLine(line, false);
-        }
+        // }
     }
 }
 
