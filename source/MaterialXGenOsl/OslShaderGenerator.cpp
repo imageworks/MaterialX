@@ -346,7 +346,7 @@ void OslShaderGenerator::emitLibraryIncludes(ShaderStage& stage, GenContext& con
     static const string INCLUDE_SUFFIX = "\"";
     static const StringVec INCLUDE_FILES =
     {
-        "mx_funcs.h"
+        // "mx_funcs.h"
     };
 
     for (const string& file : INCLUDE_FILES)
