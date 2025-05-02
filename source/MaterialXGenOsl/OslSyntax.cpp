@@ -464,6 +464,28 @@ OslSyntax::OslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
             "#define MATERIAL closure color"));
 
     registerTypeSyntax(
+        Type::POINT,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "point",
+            "point(0.0)",
+            "point(0.0)",
+            EMPTY_STRING,
+            EMPTY_STRING,
+            VECTOR_MEMBERS));
+
+    registerTypeSyntax(
+        Type::NORMAL,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "normal",
+            "normal(0.0)",
+            "normal(0.0)",
+            EMPTY_STRING,
+            EMPTY_STRING,
+            VECTOR_MEMBERS));
+
+    registerTypeSyntax(
         Type::TEXTUREOVENAOVDATA,
         std::make_shared<AggregateTypeSyntax>(
             this,
@@ -500,6 +522,244 @@ OslSyntax::OslSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
             "shadingAovsData",
             "SHADING_AOVS_DATA_INIT",
             "SHADING_AOVS_DATA_INIT",
+            "",
+            ""));
+
+
+    registerTypeSyntax(
+        Type::UBERDSPDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "uberDspData",
+            "UBER_DSP_DATA_INIT",
+            "UBER_DSP_DATA_INIT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::AOVSETTINGSDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "aovSettingsData",
+            "AOV_SETTINGS_INIT",
+            "AOV_SETTINGS_INIT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::AOVDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "aovData",
+            "AOV_DATA_INIT",
+            "AOV_DATA_INIT",
+            "",
+            ""));
+
+
+    registerTypeSyntax(
+        Type::QUICKSHADEMODEDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "quickshadeModeData",
+            "QUICKSHADE_MODEDATA_DEFAULT",
+            "QUICKSHADE_MODEDATA_DEFAULT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::BUMPDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "bumpData",
+            "BUMP_DATA_INIT",
+            "BUMP_DATA_INIT",
+            "",
+            ""));
+
+    registerTypeSyntax(
+        Type::NORMALDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "normalData",
+            "NORMAL_DATA_INIT",
+            "NORMAL_DATA_INIT",
+            "",
+            ""));
+
+
+    registerTypeSyntax(
+        Type::PPAINTTEXTUREREADDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "ppaintTextureReadData",
+            "PPAINT_TEXTURE_READ_DATA_INIT",
+            "PPAINT_TEXTURE_READ_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::STDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "stData",
+            "ST_DATA_INIT",
+            "ST_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::STTRANSFORMDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "stTransformData",
+            "ST_TRANSFORM_DATA_INIT",
+            "ST_TRANSFORM_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::PROJECTIONMATRICESDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "projectionMatricesData",
+            "PROJECTION_MATRICES_DATA_INIT",
+            "PROJECTION_MATRICES_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::BOMBDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "bombData",
+            "BOMB_DATA_INIT",
+            "BOMB_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::BOMBCOMPMODEDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "bombCompModeData",
+            "BOMB_COMP_MODE_INIT",
+            "BOMB_COMP_MODE_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::BOMBINPUTDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "bombInputData",
+            "BOMB_INPUT_DATA_INIT",
+            "BOMB_INPUT_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::PPAINTPROJECTIONDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "ppaintProjectionData",
+            "PPAINT_PROJECTION_DATA_INIT",
+            "PPAINT_PROJECTION_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::PPAINTDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "ppaintData",
+            "PPAINT_DATA_INIT",
+            "PPAINT_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::PBRTEXTUREDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "pbrTextureData",
+            "PBR_TEXTURE_DATA_INIT",
+            "PBR_TEXTURE_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::POINTCLOUDSEARCHDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "pointcloudSearchData",
+            "POINTCLOUD_SEARCH_INIT",
+            "POINTCLOUD_SEARCH_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::EYEMASKDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "eyeMaskData",
+            "EYE_MASK_DATA_INIT",
+            "EYE_MASK_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::EYEAOVDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "eyeAovData",
+            "EYE_AOV_DATA_INIT",
+            "EYE_AOV_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::CAMERARAYDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "cameraRayData",
+            "CAMERA_RAY_DATA_INIT",
+            "CAMERA_RAY_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::CREASELINESDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "creaseLinesData",
+            "CREASE_LINES_DATA_INIT",
+            "CREASE_LINES_DATA_INIT",
+            "",
+            ""));
+    
+
+    registerTypeSyntax(
+        Type::DISPDATA,
+        std::make_shared<AggregateTypeSyntax>(
+            this,
+            "dispData",
+            "DISP_DATA_INIT",
+            "DISP_DATA_INIT",
             "",
             ""));
 

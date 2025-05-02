@@ -76,10 +76,40 @@ TypeSystem::TypeSystem()
     registerType(Type::LIGHTSHADER);
     registerType(Type::MATERIAL);
 
+    registerType(Type::POINT);
+    registerType(Type::NORMAL);
+
     registerType(Type::TEXTUREOVENAOVDATA);
     registerType(Type::TEXTUREOVENBAKEMATERIALSDATA);
     registerType(Type::UBERDATA);
     registerType(Type::SHADINGAOVSDATA);
+    registerType(Type::UBERDSPDATA);
+
+    registerType(Type::AOVSETTINGSDATA);
+    registerType(Type::AOVDATA);
+    registerType(Type::QUICKSHADEMODEDATA);
+
+    registerType(Type::NORMALDATA);
+    registerType(Type::BUMPDATA);
+
+    registerType(Type::PPAINTTEXTUREREADDATA);
+    registerType(Type::STDATA);
+    registerType(Type::STTRANSFORMDATA);
+    registerType(Type::PROJECTIONMATRICESDATA);
+    registerType(Type::BOMBDATA);
+    registerType(Type::BOMBCOMPMODEDATA);
+    registerType(Type::BOMBINPUTDATA);
+    registerType(Type::PPAINTPROJECTIONDATA);
+    registerType(Type::PPAINTDATA);
+    registerType(Type::PBRTEXTUREDATA);
+    registerType(Type::POINTCLOUDSEARCHDATA);
+    registerType(Type::EYEMASKDATA);
+    registerType(Type::EYEAOVDATA);
+    registerType(Type::CAMERARAYDATA);
+    registerType(Type::CREASELINESDATA);
+
+    registerType(Type::DISPDATA);
+
 }
 
 TypeSystemPtr TypeSystem::create()
