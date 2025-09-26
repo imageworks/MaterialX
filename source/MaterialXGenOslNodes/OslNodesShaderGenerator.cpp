@@ -44,6 +44,9 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
             const string& inputName = input->getName();
             TypeDesc inputType = input->getType();
 
+            if (input->isDefault())
+                continue;
+
             const ShaderOutput* connection = input->getConnection();
             if (connection->getNode() == &graph) {
                 emitLine("param " + _syntax->getTypeName(inputType) + " " + input->getName() + " " + input->getValueString() + " ;", stage, false);
