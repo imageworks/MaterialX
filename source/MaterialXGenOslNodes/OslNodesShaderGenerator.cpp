@@ -44,11 +44,18 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
             const string& inputName = input->getName();
             TypeDesc inputType = input->getType();
 
+            if (!input->getValue())
+                continue;
+
             if (input->isDefault())
                 continue;
 
             const ShaderOutput* connection = input->getConnection();
             if (connection->getNode() == &graph) {
+                if (input->getName() == "backsurfaceshader"
+                    || input->getName() == "displacementshader")
+                    continue; // FIXME: these aren't getting pruned by isDefault
+
                 emitLine("param " + _syntax->getTypeName(inputType) + " " + input->getName() + " " + input->getValueString() + " ;", stage, false);
             } else {
                 string connect = "connect " + connection->getNode()->getName() + "." + connection->getName() + " " + name + "." + inputName + " ;";
