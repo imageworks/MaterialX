@@ -33,7 +33,7 @@
 #include <MaterialXGenMdl/MdlShaderGenerator.h>
 #endif
 #if MATERIALX_BUILD_GEN_OSL
-#include <MaterialXGenOsl/OslShaderGenerator.h>
+#include <MaterialXGenOslNodes/OslNodesShaderGenerator.h>
 #endif
 #include <MaterialXGenGlsl/EsslShaderGenerator.h>
 
@@ -206,7 +206,7 @@ Viewer::Viewer(const std::string& materialFilename,
     _genContext(mx::MslShaderGenerator::create(_typeSystem)),
 #endif
 #if MATERIALX_BUILD_GEN_OSL
-    _genContextOsl(mx::OslShaderGenerator::create(_typeSystem)),
+    _genContextOsl(mx::OslNodesShaderGenerator::create(_typeSystem)),
 #endif
 #if MATERIALX_BUILD_GEN_MDL
     _genContextMdl(mx::MdlShaderGenerator::create(_typeSystem)),
@@ -1657,11 +1657,11 @@ void Viewer::saveShaderSource(mx::GenContext& context)
             }
 #endif
 #if MATERIALX_BUILD_GEN_OSL
-            else if (context.getShaderGenerator().getTarget() == mx::OslShaderGenerator::TARGET)
+            else if (context.getShaderGenerator().getTarget() == mx::OslNodesShaderGenerator::TARGET)
             {
                 mx::ShaderPtr shader = createShader(elem->getNamePath(), context, elem);
                 const std::string& pixelShader = shader->getSourceCode(mx::Stage::PIXEL);
-                sourceFilename.addExtension("osl");
+                sourceFilename.addExtension("osl.cjh");
                 writeTextFile(pixelShader, sourceFilename);
                 new ng::MessageDialog(this, ng::MessageDialog::Type::Information, "Saved OSL source: ", sourceFilename);
             }
