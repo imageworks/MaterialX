@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#ifndef MATERIALX_OSLSHADERGENERATOR_H
-#define MATERIALX_OSLSHADERGENERATOR_H
+#ifndef MATERIALX_OSLNODESSHADERGENERATOR_H
+#define MATERIALX_OSLNODESSHADERGENERATOR_H
 
 /// @file
 /// OSL shading language generator

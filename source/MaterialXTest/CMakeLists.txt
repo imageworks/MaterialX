@@ -53,7 +53,7 @@ if(MATERIALX_BUILD_GEN_GLSL OR MATERIALX_BUILD_GEN_OSL OR MATERIALX_BUILD_GEN_MD
     target_link_libraries(MaterialXTest MaterialXGenOsl)
 
     # add_subdirectory(MaterialXGenOslNodes)
-    # target_link_libraries(MaterialXTest MaterialXGenOslNodes)
+    target_link_libraries(MaterialXTest MaterialXGenOslNodes)
   endif()
   if(MATERIALX_BUILD_GEN_MDL)
     add_subdirectory(MaterialXGenMdl)

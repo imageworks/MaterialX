@@ -14,6 +14,7 @@
 #endif
 
 #include <MaterialXGenOsl/OslShaderGenerator.h>
+#include <MaterialXGenOslNodes/OslNodesShaderGenerator.h>
 
 #include <MaterialXFormat/Util.h>
 
@@ -239,9 +240,10 @@ bool OslShaderRenderTester::runRenderer(const std::string& shaderName,
             
             std::string oslCmdStr = shader->getSourceCode();
             /// TODO: this is a temp value.
-            oslCmdStr  = "shader test_node test_node;\n";
-            oslCmdStr += "shader closure_passthrough closure_passthrough;\n";
-            oslCmdStr += "connect test_node.Out_Ci closure_passthrough.Cin;\n";
+            // oslCmdStr  = "shader test_node test_node;\n";
+            // oslCmdStr += "shader closure_passthrough closure_passthrough;\n";
+            // oslCmdStr += "connect test_node.Out_Ci closure_passthrough.Cin;\n";
+            printf("command string: %s\n", oslCmdStr.c_str());
 
 
             std::string shaderPath;
@@ -396,6 +398,6 @@ TEST_CASE("Render: OSL Nodes TestSuite", "[oslNodes]")
     mx::FilePath optionsFilePath = searchPath.find("resources/Materials/TestSuite/_options.mtlx");
 
     /// TODO: change to chris' new shader generator
-    OslShaderRenderTester renderTester(mx::OslShaderGenerator::create(), true);
+    OslShaderRenderTester renderTester(mx::OslNodesShaderGenerator::create(), true);
     renderTester.validate(optionsFilePath);
 }

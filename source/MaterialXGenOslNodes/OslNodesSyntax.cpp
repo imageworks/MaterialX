@@ -377,7 +377,7 @@ OslNodesSyntax::OslNodesSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         Type::FILENAME,
         std::make_shared<OSLFilenameTypeSyntax>(
             this,
-            "textureresource ",
+            "string",
             "textureresource (\"\", \"\")",
             "(\"\", \"\")",
             EMPTY_STRING,

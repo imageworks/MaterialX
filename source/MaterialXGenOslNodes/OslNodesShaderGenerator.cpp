@@ -36,8 +36,6 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
     ShaderGraph& graph = shader->getGraph();
     ShaderStage& stage = shader->getStage(Stage::PIXEL);
 
-    emitLine("hello world!", stage, false);
-
     std::vector<string> connections;
     for (auto&& node : graph.getNodes()) {
         const string& name = node->getName();
