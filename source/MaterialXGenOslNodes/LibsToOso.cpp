@@ -27,15 +27,14 @@ const std::string options =
     "        --oslCompilerPath [FILEPATH]    TODO\n"
     "        --oslIncludePath [DIRPATH]      TODO\n"
     "        --libraries [STRING]            TODO\n"
+    "        --removeNdPrefix [BOOLEAN]      TODO\n"
     "        --prefix [STRING]               TODO\n"
     "        --help                          Display the complete list of command-line options\n";
 
 template <class T> void parseToken(std::string token, std::string type, T& res)
 {
     if (token.empty())
-    {
         return;
-    }
 
     mx::ValuePtr value = mx::Value::createValueFromStrings(token, type);
 
@@ -63,6 +62,7 @@ int main(int argc, char* const argv[])
     std::string argOslCompilerPath;
     std::string argOslIncludePath;
     std::string argLibraries;
+    bool argRemoveNdPrefix = false;
     std::string argPrefix;
 
     // Loop over the provided arguments, and store their associated values.
@@ -72,25 +72,17 @@ int main(int argc, char* const argv[])
         const std::string& nextToken = i + 1 < tokens.size() ? tokens[i + 1] : mx::EMPTY_STRING;
 
         if (token == "--outputPath")
-        {
             argOutputPath = nextToken;
-        }
         else if (token == "--oslCompilerPath")
-        {
             argOslCompilerPath = nextToken;
-        }
         else if (token == "--oslIncludePath")
-        {
             argOslIncludePath = nextToken;
-        }
         else if (token == "--libraries")
-        {
             argLibraries = nextToken;
-        }
+        else if (token == "--removeNdPrefix")
+            parseToken(nextToken, "boolean", argRemoveNdPrefix);
         else if (token == "--prefix")
-        {
             argPrefix = nextToken;
-        }
         else if (token == "--help")
         {
             std::cout << "MaterialXGenOslNodes - LibsToOso version " << mx::getVersionString() << std::endl;
@@ -109,13 +101,9 @@ int main(int argc, char* const argv[])
         }
 
         if (nextToken.empty())
-        {
             std::cout << "Expected another token following command-line option: " << token << std::endl;
-        }
         else
-        {
             i++;
-        }
     }
 
     // TODO: Debug prints, to be removed.
@@ -124,6 +112,7 @@ int main(int argc, char* const argv[])
     std::cout << "\toslCompilerPath: " << argOslCompilerPath << std::endl;
     std::cout << "\toslIncludePath: " << argOslIncludePath << std::endl;
     std::cout << "\tlibraries: " << argLibraries << std::endl;
+    std::cout << "\tremoveNdPrefix: " << argRemoveNdPrefix << std::endl;
     std::cout << "\tprefix: " << argPrefix << std::endl;
 
     // Ensure we have a valid output path.
@@ -175,17 +164,13 @@ int main(int argc, char* const argv[])
         mx::FilePathVec librariesPaths{ "libraries/targets" };
 
         for (const std::string& library : librariesVec)
-        {
             librariesPaths.emplace_back("libraries/" + library);
-        }
 
         loadLibraries(librariesPaths, librariesSearchPath, librariesDoc);
     }
     // Otherwise, simply load all the available libraries.
     else
-    {
         loadLibraries({ "libraries" }, librariesSearchPath, librariesDoc);
-    }
 
     // Create and setup the `OslRenderer` that will be used to both generate the `.osl` files as well as compile
     // them to `.oso` files.
@@ -210,19 +195,16 @@ int main(int argc, char* const argv[])
 
     // Setup the context of the OSL shader generator.
     mx::GenContext context(oslShaderGen);
-    context.getOptions().addUpstreamDependencies = false;
     context.registerSourceCodeSearchPath(librariesSearchPath);
+    // TODO: It might be good to find a way to not hardcode these options, especially the texture flip.
+    context.getOptions().addUpstreamDependencies = false;
     context.getOptions().fileTextureVerticalFlip = true;
-
-    // TODO: Add control over the name of the log file?
-    // Create a log file in the provided output path.
-    const mx::FilePath& logFilePath(outputPath.asString() + "/genoslnodes_libs_to_oso.txt");
-    std::ofstream logFile;
-
-    logFile.open(logFilePath);
 
     // We'll use this boolean to return an error code is one of the `NodeDef` failed to codegen/compile.
     bool hasFailed = false;
+
+    // We create and use a dedicated `NodeGraph` to avoid `NodeDef` names collision.
+    mx::NodeGraphPtr librariesDocGraph = librariesDoc->addNodeGraph("librariesDocGraph");
 
     // Loop over all the `NodeDef` gathered in our documents from the provided libraries.
     for (const mx::NodeDefPtr& nodeDef : librariesDoc->getNodeDefs())
@@ -230,15 +212,14 @@ int main(int argc, char* const argv[])
         std::string nodeName = nodeDef->getName();
 
         // Remove the "ND_" prefix from a valid `NodeDef` name.
-        if (nodeName.size() > 3 && nodeName.substr(0, 3) == "ND_")
+        if (argRemoveNdPrefix)
         {
-            nodeName = nodeName.substr(3);
-        }
+            if (nodeName.size() > 3 && nodeName.substr(0, 3) == "ND_")
+                nodeName = nodeName.substr(3);
 
-        // Add a prefix to the shader's name, both in the filename as well as inside the shader itself.
-        if (!argPrefix.empty())
-        {
-            nodeName = argPrefix + "_" + nodeName;
+            // Add a prefix to the shader's name, both in the filename as well as inside the shader itself.
+            if (!argPrefix.empty())
+                nodeName = argPrefix + "_" + nodeName;
         }
 
         // Determine whether or not there's a valid implementation of the current `NodeDef` for the type associated
@@ -247,63 +228,64 @@ int main(int argc, char* const argv[])
 
         if (!nodeImpl)
         {
-            logFile << "The following `NodeDef` does not provide a valid OSL implementation, "
-                       "and will be skipped: "
-                    << nodeName << std::endl;
+            std::cout << "The following `NodeDef` does not provide a valid OSL implementation, "
+                         "and will be skipped: "
+                      << nodeDef->getName() << std::endl;
 
             continue;
         }
 
         // TODO: Check for the existence/validity of the `Node`?
-        mx::NodePtr node = librariesDoc->addNodeInstance(nodeDef, nodeName);
-        const std::string oslFileName = nodeName + ".osl";
+        mx::NodePtr node = librariesDocGraph->addNodeInstance(nodeDef, nodeName);
 
+        const std::string& oslFileName = nodeName + ".osl";
+        const std::string& oslFilePath = (outputPath / oslFileName).asString();
+        std::ofstream oslFile;
+
+        // Codegen the `Node` to an `.osl` file.
         try
         {
             // Codegen the `Node` to OSL.
             mx::ShaderPtr oslShader = oslShaderGen->generate(node->getName(), node, context);
-
-            const std::string& oslFilePath = (outputPath / oslFileName).asString();
-            std::ofstream oslFile;
 
             // TODO: Check that we have a valid/opened file descriptor before doing anything with it?
             oslFile.open(oslFilePath);
             // Dump the content of the codegen'd `NodeDef` to our `.osl` file.
             oslFile << oslShader->getSourceCode();
             oslFile.close();
+        }
+        // Catch any codegen/compilation related exceptions.
+        catch (mx::ExceptionShaderGenError& exc)
+        {
+            std::cerr << "Encountered a shader codegen related exception for the "
+                         "following node: "
+                      << nodeDef->getName() << std::endl;
+            std::cerr << exc.what() << std::endl;
 
+            hasFailed = true;
+        }
+
+        // Compile the codegen'd `.osl` file.
+        try
+        {
             // Compile the `.osl` file to a `.oso` file next to it.
             oslRenderer->compileOSL(oslFilePath);
         }
         // Catch any codegen/compilation related exceptions.
         catch (mx::ExceptionRenderError& exc)
         {
-            logFile << "Encountered a codegen/compilation related exception for the "
-                       "following node: "
-                    << nodeName << std::endl;
-            logFile << exc.what() << std::endl;
+            std::cerr << "Encountered a shader compilation related exception for the "
+                         "following node: "
+                      << nodeDef->getName() << std::endl;
+            std::cerr << exc.what() << std::endl;
 
             // Dump details about the exception in the log file.
             for (const std::string& error : exc.errorLog())
-            {
-                logFile << error << std::endl;
-            }
+                std::cerr << error << std::endl;
 
             hasFailed = true;
         }
-        // Catch any other exceptions
-        catch (mx::Exception& exc)
-        {
-            logFile << "Failed to codegen/compile the following node to OSL: " << nodeName << std::endl;
-            logFile << exc.what() << std::endl;
-
-            hasFailed = true;
-        }
-
-        librariesDoc->removeChild(node->getName());
     }
-
-    logFile.close();
 
     // If something went wrong, return an appropriate error code.
     if (hasFailed)
