@@ -23,7 +23,8 @@ namespace mx = MaterialX;
 
 const std::string options =
     "    Options: \n"
-    "        --outputPath [DIRPATH]          TODO\n"
+    "        --oslOutputPath [DIRPATH]       TODO\n"
+    "        --osoOutputPath [DIRPATH]       TODO\n"
     "        --oslCompilerPath [FILEPATH]    TODO\n"
     "        --oslIncludePath [DIRPATH]      TODO\n"
     "        --libraries [STRING]            TODO\n"
@@ -58,7 +59,8 @@ int main(int argc, char* const argv[])
         tokens.emplace_back(argv[i]);
     }
 
-    std::string argOutputPath;
+    std::string argOslOutputPath;
+    std::string argOsoOutputPath;
     std::string argOslCompilerPath;
     std::string argOslIncludePath;
     std::string argLibraries;
@@ -71,8 +73,10 @@ int main(int argc, char* const argv[])
         const std::string& token = tokens[i];
         const std::string& nextToken = i + 1 < tokens.size() ? tokens[i + 1] : mx::EMPTY_STRING;
 
-        if (token == "--outputPath")
-            argOutputPath = nextToken;
+        if (token == "--oslOutputPath")
+            argOslOutputPath = nextToken;
+        else if (token == "--osoOutputPath")
+            argOsoOutputPath = nextToken;
         else if (token == "--oslCompilerPath")
             argOslCompilerPath = nextToken;
         else if (token == "--oslIncludePath")
@@ -108,27 +112,52 @@ int main(int argc, char* const argv[])
 
     // TODO: Debug prints, to be removed.
     std::cout << "MaterialXGenOslNodes - LibsToOso" << std::endl;
-    std::cout << "\toutputPath: " << argOutputPath << std::endl;
+    std::cout << "\toslOutputPath: " << argOslOutputPath << std::endl;
+    std::cout << "\tosoOutputPath: " << argOsoOutputPath << std::endl;
     std::cout << "\toslCompilerPath: " << argOslCompilerPath << std::endl;
     std::cout << "\toslIncludePath: " << argOslIncludePath << std::endl;
     std::cout << "\tlibraries: " << argLibraries << std::endl;
     std::cout << "\tremoveNdPrefix: " << argRemoveNdPrefix << std::endl;
     std::cout << "\tprefix: " << argPrefix << std::endl;
 
-    // Ensure we have a valid output path.
-    mx::FilePath outputPath(argOutputPath);
+    // Ensure we have a valid OSL output path.
+    mx::FilePath oslOutputPath(argOslOutputPath);
 
-    if (!outputPath.exists() || !outputPath.isDirectory())
+    if (!oslOutputPath.exists() || !oslOutputPath.isDirectory())
     {
-        outputPath.createDirectory();
+        oslOutputPath.createDirectory();
 
-        if (!outputPath.exists() || !outputPath.isDirectory())
+        if (!oslOutputPath.exists() || !oslOutputPath.isDirectory())
         {
-            std::cerr << "Failed to find and/or create the provided output "
+            std::cerr << "Failed to find and/or create the provided OSL output "
                          "path: "
-                      << outputPath.asString() << std::endl;
+                      << oslOutputPath.asString() << std::endl;
 
             return 1;
+        }
+    }
+
+    // If provided, ensure we have a valid OSO output path, otherwise use the OSL output path.
+    mx::FilePath osoOutputPath(argOsoOutputPath);
+
+    if (osoOutputPath.isEmpty())
+    {
+        osoOutputPath = oslOutputPath;
+    }
+    else
+    {
+        if (!osoOutputPath.exists() || !osoOutputPath.isDirectory())
+        {
+            osoOutputPath.createDirectory();
+
+            if (!osoOutputPath.exists() || !osoOutputPath.isDirectory())
+            {
+                std::cerr << "Failed to find and/or create the provided OSO output "
+                             "path: "
+                          << osoOutputPath.asString() << std::endl;
+
+                return 1;
+            }
         }
     }
 
@@ -176,6 +205,7 @@ int main(int argc, char* const argv[])
     // them to `.oso` files.
     mx::OslRendererPtr oslRenderer = mx::OslRenderer::create();
     oslRenderer->setOslCompilerExecutable(oslCompilerPath);
+    oslRenderer->setOslOutputFilePath(osoOutputPath);
 
     // Build the list of include paths that will be passed to the `OslRenderer`.
     mx::FileSearchPath oslRendererIncludePaths;
@@ -239,7 +269,7 @@ int main(int argc, char* const argv[])
         mx::NodePtr node = librariesDocGraph->addNodeInstance(nodeDef, nodeName);
 
         const std::string& oslFileName = nodeName + ".osl";
-        const std::string& oslFilePath = (outputPath / oslFileName).asString();
+        const std::string& oslFilePath = (oslOutputPath / oslFileName).asString();
         std::ofstream oslFile;
 
         // Codegen the `Node` to an `.osl` file.
