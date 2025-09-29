@@ -43,30 +43,13 @@ class MX_GENOSLNODES_API OslNodesShaderGenerator : public ShaderGenerator
     /// the element and all dependencies upstream into shader code.
     ShaderPtr generate(const string& name, ElementPtr element, GenContext& context) const override;
 
-    /// Add all function calls for a node, and all upstream nodes.
-    void emitAllDependentFunctionCalls(const ShaderNode& node, GenContext& context, ShaderStage& stage) const;
-
     /// Unique identifier for this generator target
     static const string TARGET;
-
-    /// Register metadata that should be exported to the generated shaders.
-    void registerShaderMetadata(const DocumentPtr& doc, GenContext& context) const override;
 
   protected:
     /// Create and initialize a new OSL shader for shader generation.
     virtual ShaderPtr createShader(const string& name, ElementPtr element, GenContext& context) const;
 
-    /// Emit include headers needed by the generated shader code.
-    virtual void emitLibraryIncludes(ShaderStage& stage, GenContext& context) const;
-
-    /// Emit a block of shader inputs.
-    virtual void emitShaderInputs(const VariableBlock& inputs, ShaderStage& stage) const;
-
-    /// Emit a block of shader outputs.
-    virtual void emitShaderOutputs(const VariableBlock& inputs, ShaderStage& stage) const;
-
-    /// Emit metadata for a shader parameter.
-    virtual void emitMetadata(const ShaderPort* port, ShaderStage& stage) const;
 };
 
 namespace OSL
