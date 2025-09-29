@@ -14,6 +14,35 @@ MATERIALX_NAMESPACE_BEGIN
 namespace
 {
 
+template <class T>
+class OslNodesVectorTypeSyntax : public AggregateTypeSyntax
+{
+  public:
+    OslNodesVectorTypeSyntax(const Syntax* parent, const string& name, const string& defaultValue, const string& uniformDefaultValue,
+                             const string& typeAlias = EMPTY_STRING, const string& typeDefinition = EMPTY_STRING,
+                             const StringVec& members = EMPTY_MEMBERS) :
+        AggregateTypeSyntax(parent, name, defaultValue, uniformDefaultValue, typeAlias, typeDefinition, members)
+    {
+    }
+
+    string getValue(const Value& value, bool uniform) const override
+    {
+        T c = value.asA<T>();
+
+        string result = "";
+        string separator = "";
+        for (int i = 0; i < c.numElements(); i++) {
+            result += separator;
+            result += toValueString(c[i]);
+
+            separator = " ";
+        }
+
+        return result;
+
+    }
+};
+
 class OslBooleanTypeSyntax : public ScalarTypeSyntax
 {
   public:
@@ -207,17 +236,13 @@ class OSLFilenameTypeSyntax : public AggregateTypeSyntax
             return EMPTY_STRING;
         }
 
-        const string prefix = uniform ? "{" : getName() + "(";
-        const string suffix = uniform ? "}" : ")";
         const string filename = port->getValue() ? port->getValue()->getValueString() : EMPTY_STRING;
-        return prefix + "\"" + filename + "\", \"" + port->getColorSpace() + "\"" + suffix;
+        return filename;
     }
 
     string getValue(const Value& value, bool uniform) const override
     {
-        const string prefix = uniform ? "{" : getName() + "(";
-        const string suffix = uniform ? "}" : ")";
-        return prefix + "\"" + value.getValueString() + "\", \"\"" + suffix;
+        return value.getValueString();
     }
 };
 
@@ -301,7 +326,7 @@ OslNodesSyntax::OslNodesSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         // Note: the color type in OSL is a built in type and
         // should not use the custom OslStructTypeSyntax.
         Type::COLOR3,
-        std::make_shared<AggregateTypeSyntax>(
+        std::make_shared<OslNodesVectorTypeSyntax<Color3>>(
             this,
             "color",
             "color(0.0)",
@@ -316,7 +341,7 @@ OslNodesSyntax::OslNodesSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
 
     registerTypeSyntax(
         Type::VECTOR2,
-        std::make_shared<OslStructTypeSyntax>(
+        std::make_shared<OslNodesVectorTypeSyntax<Vector2>>(
             this,
             "vector2",
             "vector2(0.0, 0.0)",
@@ -329,7 +354,7 @@ OslNodesSyntax::OslNodesSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
         // Note: the vector type in OSL is a built in type and
         // should not use the custom OslStructTypeSyntax.
         Type::VECTOR3,
-        std::make_shared<AggregateTypeSyntax>(
+        std::make_shared<OslNodesVectorTypeSyntax<Vector3>>(
             this,
             "vector",
             "vector(0.0)",
@@ -340,7 +365,7 @@ OslNodesSyntax::OslNodesSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
 
     registerTypeSyntax(
         Type::VECTOR4,
-        std::make_shared<OslStructTypeSyntax>(
+        std::make_shared<OslNodesVectorTypeSyntax<Vector4>>(
             this,
             "vector4",
             "vector4(0.0, 0.0, 0.0, 0.0)",

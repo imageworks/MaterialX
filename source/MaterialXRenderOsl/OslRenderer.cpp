@@ -159,6 +159,8 @@ void OslRenderer::renderOSL(const FilePath& dirPath, const string& shaderName, c
     string osoPaths(_oslUtilityOSOPath);
     osoPaths += PATH_LIST_SEPARATOR + dirPath.asString();
     osoPaths += PATH_LIST_SEPARATOR + dirPath.getParentPath().asString();
+    osoPaths += PATH_LIST_SEPARATOR + "/net/soft_scratch/users/hellmuth/src/materialx-devdays/osos";
+    printf("osoPaths: %s\n", osoPaths.c_str());
 
     // Build and run render command
     string command(_oslTestRenderExecutable);
@@ -285,6 +287,8 @@ void OslRenderer::renderOSLNodes(const FilePath& dirPath, const string& shaderNa
     string osoPaths(_oslUtilityOSOPath);
     osoPaths += PATH_LIST_SEPARATOR + dirPath.asString();
     osoPaths += PATH_LIST_SEPARATOR + dirPath.getParentPath().asString();
+    osoPaths += PATH_LIST_SEPARATOR + "/net/soft_scratch/users/hellmuth/src/materialx-devdays/oso";
+    printf("osoPaths: %s\n", osoPaths.c_str());
 
     // Build and run render command
     string command(_oslTestRenderExecutable);

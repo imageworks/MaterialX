@@ -56,13 +56,21 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
                     || input->getName() == "displacementshader")
                     continue; // FIXME: these aren't getting pruned by isDefault
 
-                emitLine("param " + _syntax->getTypeName(inputType) + " " + input->getName() + " " + input->getValueString() + " ;", stage, false);
+                emitLine("param " + _syntax->getTypeName(inputType) + " " + input->getName() + " " + _syntax->getValue(input) + " ;", stage, false);
             } else {
                 string connect = "connect " + connection->getNode()->getName() + "." + connection->getName() + " " + name + "." + inputName + " ;";
                 connections.push_back(connect);
             }
         }
-        emitLine("shader " + node->getNodeDefName() + " " + name + " ;", stage, false);
+
+        string nodeDefName = node->getNodeDefName();
+        // Remove the "ND_" prefix from a valid `NodeDef` name.
+        if (nodeDefName.size() > 3 && nodeDefName.substr(0, 3) == "ND_")
+        {
+            nodeDefName = nodeDefName.substr(3);
+        }
+
+        emitLine("shader " + nodeDefName + " " + name + " ;", stage, false);
     }
 
     for (auto&& connect : connections) {
