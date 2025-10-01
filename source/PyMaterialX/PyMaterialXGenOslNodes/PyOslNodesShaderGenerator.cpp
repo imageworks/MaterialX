@@ -23,9 +23,9 @@ namespace
 
 void bindPyOslNodesShaderGenerator(py::module& mod)
 {
-    mod.attr("OSL_UNIFORMS") = mx::OSL::UNIFORMS;
-    mod.attr("OSL_INPUTS") = mx::OSL::INPUTS;
-    mod.attr("OSL_OUTPUTS") = mx::OSL::OUTPUTS;
+    mod.attr("OSL_UNIFORMS") = mx::OSLNodes::UNIFORMS;
+    mod.attr("OSL_INPUTS") = mx::OSLNodes::INPUTS;
+    mod.attr("OSL_OUTPUTS") = mx::OSLNodes::OUTPUTS;
 
     py::class_<mx::OslNodesShaderGenerator, mx::ShaderGenerator, mx::OslNodesShaderGeneratorPtr>(mod, "OslNodesShaderGenerator")
         .def_static("create", &OslNodesShaderGenerator_create)

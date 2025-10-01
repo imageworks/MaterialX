@@ -52,7 +52,7 @@ class MX_GENOSLNODES_API OslNodesShaderGenerator : public ShaderGenerator
 
 };
 
-namespace OSL
+namespace OSLNodes
 {
 
 /// Identifiers for OSL variable blocks

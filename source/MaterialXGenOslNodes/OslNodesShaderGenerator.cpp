@@ -89,15 +89,15 @@ ShaderPtr OslNodesShaderGenerator::createShader(const string& name, ElementPtr e
 
     // Create our stage.
     ShaderStagePtr stage = createStage(Stage::PIXEL, *shader);
-    stage->createUniformBlock(OSL::UNIFORMS);
-    stage->createInputBlock(OSL::INPUTS);
-    stage->createOutputBlock(OSL::OUTPUTS);
+    stage->createUniformBlock(OSLNodes::UNIFORMS);
+    stage->createInputBlock(OSLNodes::INPUTS);
+    stage->createOutputBlock(OSLNodes::OUTPUTS);
 
     // Create shader variables for all nodes that need this.
     createVariables(graph, context, *shader);
 
     // Create uniforms for the published graph interface.
-    VariableBlock& uniforms = stage->getUniformBlock(OSL::UNIFORMS);
+    VariableBlock& uniforms = stage->getUniformBlock(OSLNodes::UNIFORMS);
     for (ShaderGraphInputSocket* inputSocket : graph->getInputSockets())
     {
         // Only for inputs that are connected/used internally,
@@ -109,7 +109,7 @@ ShaderPtr OslNodesShaderGenerator::createShader(const string& name, ElementPtr e
     }
 
     // Create outputs from the graph interface.
-    VariableBlock& outputs = stage->getOutputBlock(OSL::OUTPUTS);
+    VariableBlock& outputs = stage->getOutputBlock(OSLNodes::OUTPUTS);
     for (ShaderGraphOutputSocket* outputSocket : graph->getOutputSockets())
     {
         outputs.add(outputSocket->getSelf());
@@ -119,7 +119,7 @@ ShaderPtr OslNodesShaderGenerator::createShader(const string& name, ElementPtr e
 }
 
 
-namespace OSL
+namespace OSLNodes
 {
 
 // Identifiers for OSL variable blocks

@@ -337,7 +337,14 @@ OslNodesSyntax::OslNodesSyntax(TypeSystemPtr typeSystem) : Syntax(typeSystem)
 
     registerTypeSyntax(
         Type::COLOR4,
-        std::make_shared<OslColor4TypeSyntax>(this));
+        std::make_shared<OslNodesVectorTypeSyntax<Color4>>(
+            this,
+            "color",
+            "color(0.0)",
+            "color(0.0)",
+            EMPTY_STRING,
+            EMPTY_STRING,
+            VECTOR4_MEMBERS));
 
     registerTypeSyntax(
         Type::VECTOR2,
