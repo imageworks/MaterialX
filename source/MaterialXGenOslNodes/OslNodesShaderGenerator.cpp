@@ -36,6 +36,7 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
     ShaderGraph& graph = shader->getGraph();
     ShaderStage& stage = shader->getStage(Stage::PIXEL);
 
+    string lastNodeName;
     std::vector<string> connections;
     for (auto&& node : graph.getNodes()) {
         const string& name = node->getName();
@@ -44,8 +45,8 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
             const string& inputName = input->getName();
             TypeDesc inputType = input->getType();
 
-            if (!input->getValue())
-                continue;
+            // if (!input->getValue())
+            //     continue;
 
             if (input->isDefault())
                 continue;
@@ -71,10 +72,16 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
         }
 
         emitLine("shader " + nodeDefName + " " + name + " ;", stage, false);
+        lastNodeName = name;
     }
 
     for (auto&& connect : connections) {
         emitLine(connect, stage, false);
+    }
+
+    if (true /*genOption*/) {
+        emitLine("shader closure_passthrough root;", stage, false);
+        emitLine("connect " + lastNodeName + ".result root.Cin;", stage, false);
     }
 
     return shader;

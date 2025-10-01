@@ -385,7 +385,7 @@ TEST_CASE("Render: OSL TestSuite", "[renderosl]")
     renderTester.validate(optionsFilePath);
 }
 
-TEST_CASE("Render: OSL Nodes TestSuite", "[oslNodes]")
+TEST_CASE("Render: OSL Nodes TestSuite", "[renderoslnodes]")
 {
     if (std::string(MATERIALX_OSL_BINARY_OSLC).empty() &&
         std::string(MATERIALX_OSL_BINARY_TESTRENDER).empty())

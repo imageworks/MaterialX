@@ -94,7 +94,8 @@ class MX_GENSHADER_API GenOptions
         hwNormalizeUdimTexCoords(false),
         hwWriteAlbedoTable(false),
         hwWriteEnvPrefilter(false),
-        hwImplicitBitangents(true)
+        hwImplicitBitangents(true),
+        oslImplicitSurfaceShaderConversion(true)
     {
     }
     virtual ~GenOptions() { }
@@ -197,6 +198,8 @@ class MX_GENSHADER_API GenOptions
     /// Calculate fallback bitangents from existing normals and tangents
     /// inside the bitangent node.
     bool hwImplicitBitangents;
+
+    bool oslImplicitSurfaceShaderConversion;
 };
 
 MATERIALX_NAMESPACE_END

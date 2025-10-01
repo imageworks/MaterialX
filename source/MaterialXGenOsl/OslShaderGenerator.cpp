@@ -115,7 +115,7 @@ ShaderPtr OslShaderGenerator::generate(const string& name, ElementPtr element, G
     const VariableBlock& outputs = stage.getOutputBlock(OSL::OUTPUTS);
     const ShaderPort* singleOutput = outputs.size() == 1 ? outputs[0] : NULL;
 
-    const bool isSurfaceShaderOutput = singleOutput && singleOutput->getType() == Type::SURFACESHADER;
+    const bool isSurfaceShaderOutput = context.getOptions().oslImplicitSurfaceShaderConversion && singleOutput && singleOutput->getType() == Type::SURFACESHADER;
 
     if (isSurfaceShaderOutput)
     {

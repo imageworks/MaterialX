@@ -213,6 +213,7 @@ int main(int argc, char* const argv[])
     context.getOptions().addUpstreamDependencies = false;
     context.registerSourceCodeSearchPath(librariesSearchPath);
     context.getOptions().fileTextureVerticalFlip = true;
+    context.getOptions().oslImplicitSurfaceShaderConversion = false;
 
     // TODO: Add control over the name of the log file?
     // Create a log file in the provided output path.
