@@ -228,6 +228,10 @@ if((MATERIALX_BUILD_RENDER AND MATERIALX_BUILD_GEN_OSL AND MATERIALX_BUILD_TESTS
             # OSL does not yet export a CMake target for testrender.
             set(MATERIALX_OSL_BINARY_TESTRENDER $<TARGET_FILE_DIR:OSL::oslc>/testrender)
         endif()
+        if(NOT MATERIALX_OSL_INCLUDE_PATH)
+            # OSL does not yet export a CMake target for testrender.
+            set(MATERIALX_OSL_INCLUDE_PATH $<TARGET_FILE_DIR:OSL::oslc>/../include)
+        endif()
     endif()
 endif()
 
@@ -245,6 +249,10 @@ if (MATERIALX_BUILD_GEN_MDL)
     add_definitions(-DMATERIALX_MDL_RENDER_ARGUMENTS=\"${MATERIALX_MDL_RENDER_ARGUMENTS}\")
     add_definitions(-DMATERIALX_MDL_MODULE_PATHS=\"${MATERIALX_MDL_MODULE_PATHS}\")
     add_definitions(-DMATERIALX_INSTALL_MDL_MODULE_PATH=\"${MATERIALX_INSTALL_MDL_MODULE_PATH}\")
+endif()
+
+if (MATERIALX_BUILD_GEN_OSL_NODES)
+    set(MATERIALX_BUILD_DATA_LIBRARY ON)
 endif()
 
 # Adjust the default installation path

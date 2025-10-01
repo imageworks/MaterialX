@@ -59,11 +59,15 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
 
                 emitLine("param " + _syntax->getTypeName(inputType) + " " + input->getName() + " " + _syntax->getValue(input) + " ;", stage, false);
             } else {
-                string connect = "connect " + connection->getNode()->getName() + "." + connection->getName() + " " + name + "." + inputName + " ;";
+                string connect = "connect " + connection->getNode()->getName() + "." + connection->getName() + " " + name + "." + input->getFullName() + " !;";
                 connections.push_back(connect);
             }
         }
 
+        // NodeDef& nodeDef = node->getNodeDef();
+        // Implementation impl = nodeDef.getImplementation("genoslnodes"); // change def above too
+        // string function = impl.getFunction();
+        
         string nodeDefName = node->getNodeDefName();
         // Remove the "ND_" prefix from a valid `NodeDef` name.
         if (nodeDefName.size() > 3 && nodeDefName.substr(0, 3) == "ND_")

@@ -23,7 +23,8 @@ namespace mx = MaterialX;
 
 const std::string options =
     "    Options: \n"
-    "        --outputPath [DIRPATH]          TODO\n"
+    "        --outputOsoPath [DIRPATH]       TODO\n"
+    "        --outputMtlxPath [DIRPATH]      TODO\n"
     "        --oslCompilerPath [FILEPATH]    TODO\n"
     "        --oslIncludePath [DIRPATH]      TODO\n"
     "        --libraries [STRING]            TODO\n"
@@ -59,7 +60,8 @@ int main(int argc, char* const argv[])
         tokens.emplace_back(argv[i]);
     }
 
-    std::string argOutputPath;
+    std::string argOutputOsoPath;
+    std::string argOutputMtlxPath;
     std::string argOslCompilerPath;
     std::string argOslIncludePath;
     std::string argLibraries;
@@ -71,9 +73,13 @@ int main(int argc, char* const argv[])
         const std::string& token = tokens[i];
         const std::string& nextToken = i + 1 < tokens.size() ? tokens[i + 1] : mx::EMPTY_STRING;
 
-        if (token == "--outputPath")
+        if (token == "--outputOsoPath")
         {
-            argOutputPath = nextToken;
+            argOutputOsoPath = nextToken;
+        }
+        else if (token == "--outputMtlxPath")
+        {
+            argOutputMtlxPath = nextToken;
         }
         else if (token == "--oslCompilerPath")
         {
@@ -120,24 +126,40 @@ int main(int argc, char* const argv[])
 
     // TODO: Debug prints, to be removed.
     std::cout << "MaterialXGenOslNodes - LibsToOso" << std::endl;
-    std::cout << "\toutputPath: " << argOutputPath << std::endl;
+    std::cout << "\toutputOsoPath: " << argOutputOsoPath << std::endl;
+    std::cout << "\toutputMtlxPath: " << argOutputMtlxPath << std::endl;
     std::cout << "\toslCompilerPath: " << argOslCompilerPath << std::endl;
     std::cout << "\toslIncludePath: " << argOslIncludePath << std::endl;
     std::cout << "\tlibraries: " << argLibraries << std::endl;
     std::cout << "\tprefix: " << argPrefix << std::endl;
 
     // Ensure we have a valid output path.
-    mx::FilePath outputPath(argOutputPath);
+    mx::FilePath outputOsoPath(argOutputOsoPath);
 
-    if (!outputPath.exists() || !outputPath.isDirectory())
+    if (!outputOsoPath.exists() || !outputOsoPath.isDirectory())
     {
-        outputPath.createDirectory();
+        outputOsoPath.createDirectory();
 
-        if (!outputPath.exists() || !outputPath.isDirectory())
+        if (!outputOsoPath.exists() || !outputOsoPath.isDirectory())
         {
-            std::cerr << "Failed to find and/or create the provided output "
+            std::cerr << "Failed to find and/or create the provided output oso "
                          "path: "
-                      << outputPath.asString() << std::endl;
+                      << outputOsoPath.asString() << std::endl;
+
+            return 1;
+        }
+    }
+
+    mx::FilePath outputMtlxPath(argOutputMtlxPath);
+    if (!outputMtlxPath.exists() || !outputMtlxPath.isDirectory())
+    {
+        outputMtlxPath.createDirectory();
+
+        if (!outputMtlxPath.exists() || !outputMtlxPath.isDirectory())
+        {
+            std::cerr << "Failed to find and/or create the provided output Mtlx "
+                         "path: "
+                      << outputMtlxPath.asString() << std::endl;
 
             return 1;
         }
@@ -187,6 +209,10 @@ int main(int argc, char* const argv[])
         loadLibraries({ "libraries" }, librariesSearchPath, librariesDoc);
     }
 
+    const std::string target = "genoslnodes";
+    mx::FilePath implMtlxDocFilePath = outputMtlxPath / "genoslnodes_impl.mtlx";
+    mx::DocumentPtr implMtlxDoc = mx::createDocument();
+
     // Create and setup the `OslRenderer` that will be used to both generate the `.osl` files as well as compile
     // them to `.oso` files.
     mx::OslRendererPtr oslRenderer = mx::OslRenderer::create();
@@ -217,7 +243,7 @@ int main(int argc, char* const argv[])
 
     // TODO: Add control over the name of the log file?
     // Create a log file in the provided output path.
-    const mx::FilePath& logFilePath(outputPath.asString() + "/genoslnodes_libs_to_oso.txt");
+    const mx::FilePath& logFilePath(outputOsoPath.asString() + "/genoslnodes_libs_to_oso.txt");
     std::ofstream logFile;
 
     logFile.open(logFilePath);
@@ -264,7 +290,7 @@ int main(int argc, char* const argv[])
             // Codegen the `Node` to OSL.
             mx::ShaderPtr oslShader = oslShaderGen->generate(node->getName(), node, context);
 
-            const std::string& oslFilePath = (outputPath / oslFileName).asString();
+            const std::string& oslFilePath = (outputOsoPath / oslFileName).asString();
             std::ofstream oslFile;
 
             // TODO: Check that we have a valid/opened file descriptor before doing anything with it?
@@ -275,6 +301,18 @@ int main(int argc, char* const argv[])
 
             // Compile the `.osl` file to a `.oso` file next to it.
             oslRenderer->compileOSL(oslFilePath);
+
+            {
+                std::string implName = "IMPL_"+nodeName+"_"+target;
+                auto impl = implMtlxDoc->addImplementation(implName);
+                impl->setNodeDef(nodeDef);
+                // todo - decide if theres a clever way we can stash the the OSO path in here
+                // so that chrisH can pull it back out.
+                // this is writing the absolute path - which we don't want
+                impl->setFile(oslFilePath);
+                impl->setFunction(nodeName);
+                impl->setTarget(target);
+            }
         }
         // Catch any codegen/compilation related exceptions.
         catch (mx::ExceptionRenderError& exc)
@@ -303,6 +341,8 @@ int main(int argc, char* const argv[])
 
         librariesDoc->removeChild(node->getName());
     }
+
+    mx::writeToXmlFile(implMtlxDoc,  implMtlxDocFilePath);
 
     logFile.close();
 
