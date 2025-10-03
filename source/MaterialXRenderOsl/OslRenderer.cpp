@@ -211,7 +211,7 @@ void OslRenderer::renderOSL(const FilePath& dirPath, const string& shaderName, c
     }
 }
 
-void OslRenderer::renderOSLNodes(const FilePath& dirPath, const string& shaderName, const string& outputName)
+void OslRenderer::renderOSLNodes(const FilePath& dirPath, const string& shaderName)
 {
     // If command options missing, skip testing.
     if (_oslTestRenderExecutable.isEmpty() ||
@@ -510,7 +510,7 @@ void OslRenderer::render()
 
     if (_useOSLCmdStr)
     {
-        renderOSLNodes(_oslOutputFilePath, _oslShaderName, _oslShaderOutputName);
+        renderOSLNodes(_oslOutputFilePath, _oslShaderName);
     }
     else
     {
