@@ -45,7 +45,7 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
     ConstDocumentPtr document = element->getDocument();
 
     string lastNodeName;
-    ShaderOutput* lastOutput;
+    ShaderOutput* lastOutput = nullptr;
     std::vector<string> connections;
 
     std::set<std::string> osoPaths;
@@ -102,6 +102,11 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
 
         emitLine("shader " + osoName + " " + name + " ;", stage, false);
         lastNodeName = name;
+    }
+
+    if (!lastOutput) {
+        printf("Invalid shader\n");
+        return nullptr;
     }
 
     for (auto&& connect : connections) {

@@ -32,7 +32,7 @@ class OslNodesVectorTypeSyntax : public AggregateTypeSyntax
 
         string result = "";
         string separator = "";
-        for (int i = 0; i < c.numElements(); i++) {
+        for (size_t i = 0; i < c.numElements(); i++) {
             result += separator;
             result += toValueString(c[i]);
 
