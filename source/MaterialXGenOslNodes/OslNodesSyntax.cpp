@@ -25,7 +25,7 @@ class OslNodesVectorTypeSyntax : public AggregateTypeSyntax
     {
     }
 
-    string getValue(const Value& value, bool uniform) const override
+    string getValue(const Value& value, bool /*uniform*/) const override
     {
         // param string values are space-separated, not comma-separated
         T c = value.asA<T>();
@@ -189,7 +189,7 @@ class OSLFilenameTypeSyntax : public AggregateTypeSyntax
     {
     }
 
-    string getValue(const ShaderPort* port, bool uniform) const override
+    string getValue(const ShaderPort* port, bool /*uniform*/) const override
     {
         if (!port)
         {
@@ -200,7 +200,7 @@ class OSLFilenameTypeSyntax : public AggregateTypeSyntax
         return filename;
     }
 
-    string getValue(const Value& value, bool uniform) const override
+    string getValue(const Value& value, bool /*uniform*/) const override
     {
         return value.getValueString();
     }

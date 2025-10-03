@@ -52,7 +52,7 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
 
     // Walk the node graph, emitting shaders and param declarations.
     for (auto&& node : graph.getNodes()) {
-        const string& name = node->getName();
+        const string& nodeName = node->getName();
 
         for (auto&& input : node->getInputs()) {
             if (input->isDefault())
@@ -76,7 +76,7 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
                 string connName = connection->getName();
                 _syntax->makeValidName(connName);
 
-                string connect = connectString(connection->getNode()->getName(), connName,  name, inputName);
+                string connect = connectString(connection->getNode()->getName(), connName,  nodeName, inputName);
                 // Save connect emits for the end, because they can't come
                 // before both connected shaders have been declared.
                 connections.push_back(connect);
@@ -100,8 +100,8 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
         string osoPath = impl->getFile();
         osoPaths.insert(osoPath);
 
-        emitLine("shader " + osoName + " " + name + " ;", stage, false);
-        lastNodeName = name;
+        emitLine("shader " + osoName + " " + nodeName + " ;", stage, false);
+        lastNodeName = nodeName;
     }
 
     if (!lastOutput) {
