@@ -320,8 +320,11 @@ bool OslShaderRenderTester::runRenderer(const std::string& shaderName,
                     _renderer->setOSLCmdStr(oslCmdStr);
                     _renderer->useOslCommandString(_useOslCmdStr);
                     // Osl Nodes Shaders record the oso path in an attribute
-                    _renderer->setDataLibraryOSOPath( shader->getAttribute("osoPath")->getValueString() );
-
+                    auto osoPathAttr = shader->getAttribute("osoPath");
+                    if (osoPathAttr)
+                    {
+                        _renderer->setDataLibraryOSOPath( osoPathAttr->getValueString() );
+                    }
 
                     // Set scene template file. For now we only have the constant color scene file
                     mx::FileSearchPath searchPath = mx::getDefaultDataSearchPath();
