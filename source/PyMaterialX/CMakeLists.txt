@@ -47,6 +47,7 @@ if (MATERIALX_BUILD_GEN_GLSL OR MATERIALX_BUILD_GEN_OSL OR MATERIALX_BUILD_GEN_M
     endif()
     if (MATERIALX_BUILD_GEN_OSL)
         add_subdirectory(PyMaterialXGenOsl)
+        add_subdirectory(PyMaterialXGenOslNodes)
     endif()
     if (MATERIALX_BUILD_GEN_MDL)
         add_subdirectory(PyMaterialXGenMdl)
