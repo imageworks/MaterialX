@@ -146,7 +146,7 @@ void OslRenderer::renderOSL(const FilePath& dirPath, const string& shaderName, c
     rootPath.setCurrentPath();
 
     // Write scene file
-    const string sceneFileName("scene_template.xml");
+    const string sceneFileName(shaderName +"_scene_template.xml");
     std::ofstream shaderFileStream;
     shaderFileStream.open(sceneFileName);
     if (shaderFileStream.is_open())

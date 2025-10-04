@@ -290,7 +290,7 @@ int main(int argc, char* const argv[])
     context.registerSourceCodeSearchPath(librariesSearchPath);
     // TODO: It might be good to find a way to not hardcode these options, especially the texture flip.
     context.getOptions().addUpstreamDependencies = false;
-    context.getOptions().fileTextureVerticalFlip = true;
+    context.getOptions().fileTextureVerticalFlip = false;
     context.getOptions().oslImplicitSurfaceShaderConversion = false;
 
     // We'll use this boolean to return an error code is one of the `NodeDef` failed to codegen/compile.

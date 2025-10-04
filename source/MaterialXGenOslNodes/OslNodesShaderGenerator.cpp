@@ -55,14 +55,14 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
         const string& nodeName = node->getName();
 
         for (auto&& input : node->getInputs()) {
-            if (input->isDefault())
-                continue;
-
             string inputName = input->getName();
             _syntax->makeValidName(inputName);
 
             const ShaderOutput* connection = input->getConnection();
             if (!connection || connection->getNode() == &graph) {
+                if (input->isDefault())
+                    continue;
+
                 if (input->getName() == "backsurfaceshader"
                     || input->getName() == "displacementshader")
                     continue; // FIXME: these aren't getting pruned by isDefault
@@ -71,7 +71,31 @@ ShaderPtr OslNodesShaderGenerator::generate(const string& name, ElementPtr eleme
                 if (value == "null_closure()")
                     continue;
 
-                emitLine(paramString(_syntax->getTypeName(input->getType()), inputName, value), stage, false);
+                auto inputType = input->getType();
+                if (inputType == Type::VECTOR2)
+                {
+                    auto parts = splitString(value, " ");
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".x", parts[0]), stage, false);
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".y", parts[1]), stage, false);
+                }
+                else if (inputType == Type::VECTOR4)
+                {
+                    auto parts = splitString(value, " ");
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".x", parts[0]), stage, false);
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".y", parts[1]), stage, false);
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".z", parts[2]), stage, false);
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".w", parts[3]), stage, false);
+                }
+                else if (inputType == Type::COLOR4)
+                {
+                    auto parts = splitString(value, " ");
+                    emitLine(paramString(_syntax->getTypeName(Type::COLOR3), inputName+".rgb", parts[0] + " " + parts[1] + " " + parts[2]), stage, false);
+                    emitLine(paramString(_syntax->getTypeName(Type::FLOAT), inputName+".a", parts[3]), stage, false);
+                }
+                else
+                {
+                    emitLine(paramString(_syntax->getTypeName(input->getType()), inputName, value), stage, false);
+                }
             } else {
                 string connName = connection->getName();
                 _syntax->makeValidName(connName);
